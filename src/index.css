@@ -96,7 +96,7 @@ code {
 
 .task-container {
   width: 80%;
-  margin-top: 30px;
+  margin-top: 25px;
 }
 
 .task {
@@ -211,3 +211,51 @@ code {
 }
 
 /* End */
+
+
+.animate-fadeIn {
+  animation: fadeInText 0.35s ease-in-out forwards;
+}
+
+@keyframes fadeInText {
+  from {
+    transform: translateY(5px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+}
+
+.popup-container {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(2px);
+  position: fixed;
+  top: 0;
+  display: none;
+}
+
+
+.popupDel {
+  width: 350px;
+  height: 200px;
+  background: white;
+  border-radius: 15px;
+}
+
+
+.dlt-btn {
+  background-color: rgb(199, 199, 199);
+  color: white;
+  font-size: 17px;
+  padding: 10px 50px 10px 50px;
+  border-radius: 10px;
+  cursor: pointer;
+}

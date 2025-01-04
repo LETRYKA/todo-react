@@ -239,7 +239,6 @@ code {
   backdrop-filter: blur(2px);
   position: fixed;
   top: 0;
-  display: none;
 }
 
 

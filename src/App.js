@@ -6,8 +6,11 @@ import { useEffect } from 'react';
 import React from "react";
 import UseAnimations from "react-useanimations";
 import alertCircle from 'react-useanimations/lib/alertCircle';
+import moment from 'moment';
 
 function App() {
+
+  // States
   const [todo, setTodo] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState(false);
@@ -16,20 +19,23 @@ function App() {
   const [taskToDelete, setTaskToDelete] = useState();
   const [isLightMode, setIsLightMode] = useState(false);
 
+  // Get value from input
   const inputEventHandle = (event) => {
     setInputValue(event.target.value);
   };
 
+  // Add input value to state
   const inputValueAdd = () => {
     if (inputValue.length === 0) {
       setError(true);
     } else {
       setError(false);
-      setTodo([...todo, { title: inputValue, id: uuidv4(), status: "ACTIVE" }]);
+      setTodo([...todo, { title: inputValue, id: uuidv4(), status: "ACTIVE", log: "CREATED" }]);
       setInputValue("");
     }
   };
 
+  // Checkbox Function
   const checkBoxHandler = (id, isChecked) => {
     const newTodos = todo.map((todo) => {
       if (todo.id === id) {
@@ -41,17 +47,32 @@ function App() {
     setTodo(newTodos);
   };
 
+  const keypressAdd = (e, id) => {
+    if (e.key === 'Enter') {
+      inputValueAdd();
+    }
+  };
+
+
+  // Delete Function
   const deleteHandler = () => {
-    const updatedTodos = todo.filter((todo) => todo.id !== taskToDelete);
+    const updatedTodos = todo.map((task) => {
+      if (task.id === taskToDelete) {
+        return { ...task, status: "LOG", log: "DELETED", deletedAt: moment() };
+      }
+      return task;
+    });
     setTodo(updatedTodos);
     setShowPopup(false);
     setTaskToDelete();
   };
 
+  // Filter by status
   const handleFilterState = (state) => {
     setFilterState(state);
   };
 
+  // Delete popup Functions
   const openDeletePopup = (id) => {
     setTaskToDelete(id);
     setShowPopup(true);
@@ -62,6 +83,7 @@ function App() {
   };
 
 
+  // Empty Message Placeholder
   const messageHandler = () => {
     if (filterState === "ALL" && todo.length === 0) {
       return "Currently there is no task.";
@@ -74,10 +96,15 @@ function App() {
     if (filterState === "DONE" && todo.filter((task) => task.status === "DONE").length === 0) {
       return "Currently there is no completed task.";
     }
+
+    if (filterState === "LOG" && todo.filter((task) => task.status === "LOG").length === 0) {
+      return "Currently there is no completed task.";
+    }
   };
 
   const messageEmpty = messageHandler();
 
+  // isMode
   useEffect(() => {
     if (isLightMode) {
       document.documentElement.classList.add('light-mode');
@@ -92,8 +119,9 @@ function App() {
 
 
   return (
+    // App
     <div className="app-container center column">
-      <div className='header'>
+      <div style={{ zIndex: '11' }} className='header'>
         <div style={{ display: 'flex', alignContent: 'center', alignItems: 'center', marginLeft: '120px' }} className='row'>
           <p className='logo'>todo list</p>
           <ul>
@@ -131,12 +159,13 @@ function App() {
           </div>
         </div>
       )}
+
       {/* Task */}
       <h1 style={{ marginTop: '40px', marginBottom: '-5px' }}>Todo with React</h1>
       <p style={{ color: 'var(--gray-color)', fontSize: '14px', marginBottom: '50px' }} >Here's a list of your tasks for this month!</p>
       <div style={{ gap: '10px', width: '80%' }} className="row">
         <div style={{ display: 'flex', alignItems: 'start' }} className="column">
-          <input onChange={inputEventHandle} type="text" id="add-new" value={inputValue} name="addtitle" placeholder="Add new Task" />
+          <input onChange={inputEventHandle} onKeyDown={keypressAdd} type="text" id="add-new" value={inputValue} name="addtitle" placeholder="Add new Task" />
           {error && (
             <div style={{
               color: 'var(--text)',
@@ -166,27 +195,38 @@ function App() {
             color: filterState === "DONE" ? "var(--white)" : "var(--black)",
           }}
           className="cat center">Completed</button>
+        <button onClick={() => handleFilterState("LOGS")}
+          style={{
+            background: filterState === "LOGS" ? "var(--secondary-color)" : "var(--white)",
+            color: filterState === "LOGS" ? "var(--white)" : "var(--black)",
+          }}
+          className="cat center">
+          Logs
+        </button>
+
+
       </div>
 
-
+      {/* Empty Message Placehold */}
       <p style={{ fontSize: '14px', color: "var(--gray-color)", marginTop: messageEmpty ? "40px" : "0" }}>
         {messageEmpty}
       </p>
 
-
-
-      {todo.filter((todo) => {
-        if (filterState === "ALL") {
-          return true;
-        } else {
-          return todo.status === filterState;
-        }
-      })
-        .map((todo, index) => {
-          return (
-            <div key={index} className="task-container animate-fadeIn">
-              <div className="task center">
-                <div style={{ gap: '10px' }} className="row center">
+      <div className='tasks-container'>
+        {/* Task Contaner */}
+        {todo.filter((todo) => {
+          if (filterState === "ALL") {
+            return todo.status !== "LOG";
+          } else if (filterState === "LOGS") {
+            return todo.status === "LOG";
+          } else {
+            return todo.status === filterState;
+          }
+        }).map((todo, index) => (
+          <div key={index} className="task-container animate-fadeIn">
+            <div className="task center">
+              <div style={{ gap: '10px' }} className="row center">
+                {todo.status !== "LOG" && (
                   <div style={{ marginLeft: '20px' }} className="checkbox-wrapper-43">
                     <input type="checkbox"
                       onChange={(e) => checkBoxHandler(todo.id, e.target.checked)}
@@ -199,19 +239,28 @@ function App() {
                       </svg>
                     </label>
                   </div>
-                  <p id="task-title"
-                    style={{
-                      textDecoration: todo.status === "DONE" ? 'line-through' : 'none',
-                      color: todo.status === "DONE" ? '#999999' : 'var(--text)',
-                    }}>
-                    {todo.title} </p>
-                </div>
-                <i onClick={() => openDeletePopup(todo.id)}
-                  className="fa-solid fa-trash"></i>
+                )}
+                <p id="task-title"
+                  style={{
+                    marginLeft: todo.status === "LOG" ? "25px" : "0",
+                    textDecoration: todo.status === "DONE" ? 'line-through' : 'none',
+                    color: todo.status === "DONE" ? '#999999' : 'var(--text)',
+                  }}>
+                  {todo.title}
+                </p>
               </div>
+
+              {todo.status !== "LOG" && (
+                <i onClick={() => openDeletePopup(todo.id)} className="fa-solid fa-trash"></i>
+              )}
+              {todo.status === "LOG" && (
+                <p className='time'>{todo.deletedAt ? `${moment(todo.deletedAt).fromNow()}` : moment().fromNow()}</p>
+              )}
             </div>
-          );
-        })}
+          </div>
+        ))}
+      </div>
+
       <p
         style={{
           color: 'grey',
@@ -221,6 +270,8 @@ function App() {
         }}> Powered by <a style={{ textDecoration: 'none', color: 'var(--secondary-color)', fontSize: '14px' }} href="https://pinecone.mn" target="_blank" rel="noreferrer">
           Pinecone academy</a>
       </p>
+
+      {/* Footer */}
       <div className='footer'>
         <a style={{ textDecoration: 'none' }} href='https://github.com/LETRYKA/todo-react' rel='noreferrer' target='_blank'>
           <div style={{ cursor: 'pointer' }} className='row announcement'>

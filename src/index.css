@@ -3,6 +3,7 @@
 
 :root {
   /* Dark mode */
+
   --primary-color: hsl(240deg 10% 3.92%);
   --gray-color: rgb(110, 110, 110);
   --li-color: #9d9d9f;
@@ -12,9 +13,11 @@
   --black: black;
   --war: rgb(255, 86, 86);
   --text: white;
+  --hover: rgb(36, 36, 36);
 }
 
 /* Light mode */
+
 :root.light-mode {
   --primary-color: rgb(243, 243, 243);
   --gray-color: rgb(140, 140, 140);
@@ -25,6 +28,7 @@
   --black: black;
   --war: rgb(255, 86, 86);
   --text: black;
+  --hover: rgb(229, 229, 229);
 }
 
 * {
@@ -122,9 +126,9 @@ code {
 
 .app-container {
   width: 500px;
-  height: auto;
+  max-height: 700px;
   background-color: var(--primary-color);
-  margin: 10% auto;
+  margin: 5% auto;
   border-radius: 15px;
   border: 1px solid var(--border-color);
 }
@@ -177,7 +181,18 @@ code {
   transition: all .2s ease-in-out;
 }
 
+.tasks-container {
+  width: 100%;
+  max-height: 500px;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  align-content: center;
+  overflow-y: scroll;
+}
+
 .task-container {
+  margin: 0 auto;
   width: 80%;
   margin-top: 25px;
 }
@@ -195,7 +210,7 @@ code {
 }
 
 .task:hover {
-  background-color: var(--gray-color);
+  background-color: var(--hover);
 }
 
 .task p {
@@ -213,6 +228,12 @@ code {
 
 .fa-trash:hover {
   color: var(--war);
+}
+
+.time {
+  font-size: 14px !important;
+  color: var(--gray-color) !important;
+  margin-right: 20px;
 }
 
 /* Check box CSS */

@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Golos+Text:wght@400..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
 :root {
+  /* Dark mode */
   --primary-color: hsl(240deg 10% 3.92%);
   --gray-color: rgb(110, 110, 110);
   --li-color: #9d9d9f;
@@ -10,6 +11,20 @@
   --white: white;
   --black: black;
   --war: rgb(255, 86, 86);
+  --text: white;
+}
+
+/* Light mode */
+:root.light-mode {
+  --primary-color: rgb(243, 243, 243);
+  --gray-color: rgb(140, 140, 140);
+  --li-color: #9d9d9f;
+  --secondary-color: #3f51f7;
+  --border-color: #d2d2d2;
+  --white: white;
+  --black: black;
+  --war: rgb(255, 86, 86);
+  --text: black;
 }
 
 * {
@@ -55,7 +70,6 @@ code {
   /* From https://css.glass */
   background: rgba(0, 0, 0, 0.01);
   border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4.4px);
   -webkit-backdrop-filter: blur(4.4px);
   border-bottom: 1px solid var(--border-color);
@@ -70,7 +84,7 @@ code {
 
 .logo {
   font-size: 17px;
-  color: var(--white);
+  color: var(--text);
   font-weight: 600;
 }
 
@@ -116,7 +130,7 @@ code {
 }
 
 .app-container h1 {
-  color: var(--white);
+  color: var(--text);
   font-size: 23px;
   font-weight: 500;
 }
@@ -125,7 +139,7 @@ code {
   width: 300px;
   height: 40px;
   outline: none;
-  color: var(--white);
+  color: var(--text);
   padding-left: 15px;
   border-radius: 10px;
   background: var(--primary-color);
@@ -181,7 +195,7 @@ code {
 }
 
 .task:hover {
-  background-color: rgb(28, 28, 28);
+  background-color: var(--gray-color);
 }
 
 .task p {
@@ -241,7 +255,7 @@ code {
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke: var(--white);
+  stroke: var(--text);
   stroke-width: 1.5;
   transform: translate3d(0, 0, 0);
   transition: all 0.2s ease;
@@ -349,7 +363,7 @@ code {
 }
 
 .footer p {
-  color: var(--white);
+  color: var(--text);
   font-size: 12px;
   font-weight: 300;
 }

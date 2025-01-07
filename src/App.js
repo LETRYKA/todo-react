@@ -18,6 +18,9 @@ function App() {
   const [showPopup, setShowPopup] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState();
   const [isLightMode, setIsLightMode] = useState(false);
+  const [log, setLog] = useState([]);
+
+
 
   // Get value from input
   const inputEventHandle = (event) => {
@@ -30,16 +33,23 @@ function App() {
       setError(true);
     } else {
       setError(false);
-      setTodo([...todo, { title: inputValue, id: uuidv4(), status: "ACTIVE", log: "CREATED" }]);
+      const newTodo = { title: inputValue, id: uuidv4(), status: "ACTIVE", }
+      setTodo([...todo, newTodo]);
+      log.push({ task: todo.title, id: newTodo.id, logs: [{ status: "CREATED", timeline: moment() }] })
       setInputValue("");
     }
   };
+
+
+
+  console.log(log)
+
 
   // Checkbox Function
   const checkBoxHandler = (id, isChecked) => {
     const newTodos = todo.map((todo) => {
       if (todo.id === id) {
-        return { ...todo, status: isChecked ? "DONE" : "ACTIVE" };
+        return { ...todo, status: isChecked ? "DONE" : "ACTIVE", checkedAt: moment() };
       } else {
         return todo;
       }
@@ -58,7 +68,7 @@ function App() {
   const deleteHandler = () => {
     const updatedTodos = todo.map((task) => {
       if (task.id === taskToDelete) {
-        return { ...task, status: "LOG", log: "DELETED", deletedAt: moment() };
+        return { ...task, status: "LOG", log: "DELETED" };
       }
       return task;
     });
@@ -98,7 +108,7 @@ function App() {
     }
 
     if (filterState === "LOG" && todo.filter((task) => task.status === "LOG").length === 0) {
-      return "Currently there is no completed task.";
+      return "Currently there is no logs";
     }
   };
 
@@ -221,41 +231,70 @@ function App() {
             return todo.status === "LOG";
           } else {
             return todo.status === filterState;
+
           }
         }).map((todo, index) => (
           <div key={index} className="task-container animate-fadeIn">
             <div className="task center">
-              <div style={{ gap: '10px' }} className="row center">
-                {todo.status !== "LOG" && (
-                  <div style={{ marginLeft: '20px' }} className="checkbox-wrapper-43">
-                    <input type="checkbox"
-                      onChange={(e) => checkBoxHandler(todo.id, e.target.checked)}
-                      id={`cbx-${index}`}
-                      checked={todo.status === "DONE"} />
-                    <label htmlFor={`cbx-${index}`} className="check">
-                      <svg width="18px" height="18px" viewBox="0 0 18 18">
-                        <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
-                        <polyline points="1 9 7 14 15 4"></polyline>
-                      </svg>
-                    </label>
+              <div className='task-row'>
+                <div style={{ gap: '10px' }} className="row center">
+                  {/* CHECKBOX */}
+                  {todo.status !== "LOG" && (
+                    <div style={{ marginLeft: '20px' }} className="checkbox-wrapper-43">
+                      <input type="checkbox"
+                        onChange={(e) => checkBoxHandler(todo.id, e.target.checked)}
+                        id={`cbx-${index}`}
+                        checked={todo.status === "DONE"} />
+                      <label htmlFor={`cbx-${index}`} className="check">
+                        <svg width="18px" height="18px" viewBox="0 0 18 18">
+                          <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
+                          <polyline points="1 9 7 14 15 4"></polyline>
+                        </svg>
+                      </label>
+                    </div>
+                  )}
+                  {/* CHECKBOX END */}
+                  <p id="task-title"
+                    style={{
+                      fontWeight: todo.status === "LOG" ? "700" : "400",
+                      marginTop: todo.status === "LOG" ? "20px" : "",
+                      marginLeft: todo.status === "LOG" ? "25px" : "0",
+                      textDecoration: todo.status === "DONE" ? 'line-through' : 'none',
+                      color: todo.status === "DONE" ? '#999999' : 'var(--text)',
+                    }}>
+                    {todo.title}
+                  </p>
+                </div>
+                <div className='center'>
+                  {todo.status !== "LOG" && (
+                    <i onClick={() => openDeletePopup(todo.id)} className="fa-solid fa-trash"></i>
+                  )}
+                  <div style={{ display: todo.status === "LOG" ? "flex" : "none" }}>
+                    <i className="fa-solid fa-clock"></i>
                   </div>
-                )}
-                <p id="task-title"
-                  style={{
-                    marginLeft: todo.status === "LOG" ? "25px" : "0",
-                    textDecoration: todo.status === "DONE" ? 'line-through' : 'none',
-                    color: todo.status === "DONE" ? '#999999' : 'var(--text)',
-                  }}>
-                  {todo.title}
-                </p>
+                </div>
               </div>
 
-              {todo.status !== "LOG" && (
-                <i onClick={() => openDeletePopup(todo.id)} className="fa-solid fa-trash"></i>
-              )}
-              {todo.status === "LOG" && (
-                <p className='time'>{todo.deletedAt ? `${moment(todo.deletedAt).fromNow()}` : moment().fromNow()}</p>
-              )}
+
+
+              {/* <div style={{ marginBottom: todo.status === "LOG" ? "20px" : "0", display: todo.status === "LOG" ? "flex" : "none" }} className='log-child'>
+                {todo.createdAt && (
+                  <p className='time i-plus center'>
+                    <i style={{ marginRight: '8px', fontSize: '13px', transition: 'all 0.2s ease-in-out' }} className="fa-solid fa-plus"></i>
+                    Created {todo.createdAt ? `${moment(todo.createdAt).fromNow()}` : moment().fromNow()} </p>
+                )}
+                {todo.deletedAt && (
+                  <p className='time i-trash center'>
+                    <i style={{ marginRight: '8px', fontSize: '13px', transition: 'all 0.2s ease-in-out' }} className="fa-solid fa-trash"></i>
+                    Deleted {todo.deletedAt ? `${moment(todo.deletedAt).fromNow()}` : moment().fromNow()}</p>
+                )}
+                {todo.checkedAt && (
+                  <p className='time i-check center'>
+                    <i style={{ marginRight: '8px', fontSize: '13px', transition: 'all 0.2s ease-in-out' }} className="fa-solid fa-check"></i>
+                    Checked {todo.checkedAt ? `${moment(todo.checkedAt).fromNow()}` : moment().fromNow()} </p>
+                )}
+              </div> */}
+
             </div>
           </div>
         ))}

@@ -23,6 +23,7 @@ function App() {
 
 
 
+
   // Get value from input
   const inputEventHandle = (event) => {
     setInputValue(event.target.value);
@@ -34,24 +35,19 @@ function App() {
       setError(true);
     } else {
       setError(false);
-      const newTodo = { title: inputValue, id: uuidv4(), status: "ACTIVE", }
+      const newTodo = { title: inputValue, id: uuidv4(), status: "ACTIVE", log: "LOG", createdAt: moment() }
       setTodo([...todo, newTodo]);
-      setLog({ task: todo.title, id: newTodo.id, logs: [{ status: "CREATED", timeline: moment() }] })
       setInputValue("");
     }
   };
 
-
-
-  console.log(log)
-
-
+  // Checkbox Function
   const checkBoxHandler = (id, isChecked) => {
     const newTodos = todo.map((todo) => {
       if (todo.id === id) {
-        return { ...todo, status: isChecked ? "DONE" : "ACTIVE" };
+        return { ...todo, status: isChecked ? "DONE" : "ACTIVE", checkedAt: moment() };
       } else {
-        return todo;
+        return { ...todo, status: isChecked ? "DONE" : "ACTIVE", uncheckedAt: moment() };
       }
     });
     setTodo(newTodos);
@@ -68,7 +64,7 @@ function App() {
   const deleteHandler = () => {
     const updatedTodos = todo.map((task) => {
       if (task.id === taskToDelete) {
-        return { ...task, status: "LOG", log: "DELETED" };
+        return { ...task, status: "DELETED", deletedAt: moment() };
       }
       return task;
     });
@@ -218,14 +214,13 @@ function App() {
           className="cat center">
           Logs
         </button>
-
-
       </div>
 
       {/* Empty Message Placehold */}
       <p style={{ fontSize: '14px', color: "var(--gray-color)", marginTop: messageEmpty ? "40px" : "0" }}>
         {messageEmpty}
       </p>
+
 
       <div className='tasks-container'>
         {/* Task Container */}
@@ -241,7 +236,7 @@ function App() {
         }).map((todo, index) => (
           <div key={index} className="task-container animate-fadeIn">
             <div className="task center">
-              <div className='task-row'>
+              <div className="task-row">
                 <div style={{ gap: '10px' }} className="row center">
                   {/* CHECKBOX */}
                   {!isLogTabActive && (
@@ -261,9 +256,9 @@ function App() {
                   {/* CHECKBOX END */}
                   <p id="task-title"
                     style={{
-                      fontWeight: isLogTabActive ? "700" : "400",
-                      marginTop: isLogTabActive ? "25px" : "",
-                      marginLeft: isLogTabActive ? "20px" : "0",
+                      fontWeight: todo.log === "LOG" ? "700" : "400",
+                      marginTop: todo.log === "LOG" ? "20px" : "",
+                      marginLeft: todo.log === "LOG" ? "25px" : "0",
                       textDecoration: todo.status === "DONE" ? 'line-through' : 'none',
                       color: todo.status === "DONE" ? '#999999' : 'var(--text)',
                     }}>
@@ -275,19 +270,49 @@ function App() {
                     <i onClick={() => openDeletePopup(todo.id)} className="fa-solid fa-trash"></i>
                   )}
                   {isLogTabActive && (
-                    <i style={{ marginTop: '10px' }} className="fa-solid fa-clock"></i>
+                    <div style={{ display: todo.log === "LOG" ? "flex" : "none" }}>
+                      <i className="fa-solid fa-clock"></i>
+                    </div>
                   )}
                 </div>
               </div>
+
               {isLogTabActive && (
-                <div style={{ width: '90%', display: 'flex', alignItems: 'start', marginBottom: '20px' }} className='column'>
-                  {log.logs.map((entry, index) => (
-                    <p className='time i-check center' key={index}>
-                      {entry.status}{moment(entry.timeline).fromNow()}
+                <div style={{ marginBottom: todo.log === "LOG" ? "20px" : "0", display: todo.log === "LOG" ? "flex" : "none" }} className="log-child">
+                  {/* CREATE LOGO */}
+                  <p className="time i-plus center">
+                    <i style={{ marginRight: "8px", fontSize: "13px", transition: "all 0.2s ease-in-out", }} className="fa-solid fa-plus"></i>
+                    Created {todo.createdAt ? `${moment(todo.createdAt).fromNow()}` : moment().fromNow()}
+                  </p>
+
+                  {/* DELETE LOG */}
+                  <div style={{ display: todo.status === "DELETED" ? 'flex' : 'none' }}>
+                    <p className="time i-trash center">
+                      <i style={{ marginRight: "8px", fontSize: "13px", transition: "all 0.2s ease-in-out", }} className="fa-solid fa-trash"></i>
+                      Deleted {todo.deletedAt ? `${moment(todo.deletedAt).fromNow()}` : moment().fromNow()}
                     </p>
-                  ))}
+                  </div>
+
+                  {/* CHECK LOG */}
+                  {todo.checkedAt && (
+                    <p className="time i-check center">
+                      <i style={{ marginRight: "8px", fontSize: "13px", transition: "all 0.2s ease-in-out" }} className="fa-solid fa-check"></i>
+                      Checked {moment(todo.checkedAt).fromNow()}
+                    </p>
+                  )}
+
+                  {/* UNCHECK LOG */}
+                  {todo.uncheckedAt && (
+                    <p className="time i-check center">
+                      <i style={{ marginRight: "8px", fontSize: "13px", transition: "all 0.2s ease-in-out" }} className="fa-solid fa-check"></i>
+                      Unchecked {moment(todo.uncheckedAt).fromNow()}
+                    </p>
+                  )}
+
                 </div>
               )}
+
+
             </div>
           </div>
         ))}
@@ -312,7 +337,7 @@ function App() {
           </div>
         </a>
       </div>
-    </div>
+    </div >
   );
 }
 

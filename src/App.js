@@ -180,7 +180,7 @@ function App() {
       <p style={{ color: 'var(--gray-color)', fontSize: '14px', marginBottom: '50px' }} >Here's a list of your tasks for this month!</p>
       <div style={{ gap: '10px', width: '80%' }} className="row">
         <div style={{ display: 'flex', alignItems: 'start' }} className="column">
-          <input onChange={inputEventHandle} onKeyDown={keypressAdd} type="text" id="add-new" value={inputValue} name="addtitle" placeholder="Add new Task" />
+          <input onChange={inputEventHandle} onKeyDown={keypressAdd} type="text" id="add-new" value={inputValue} name="addTitle" placeholder="Add new Task" />
           {error && (
             <div style={{
               color: 'var(--text)',
@@ -222,7 +222,7 @@ function App() {
 
       </div>
 
-      {/* Empty Message Placehold */}
+      {/* Empty Message Placeholder */}
       <p style={{ fontSize: '14px', color: "var(--gray-color)", marginTop: messageEmpty ? "40px" : "0" }}>
         {messageEmpty}
       </p>

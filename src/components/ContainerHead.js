@@ -39,12 +39,12 @@ const ContainerHead = (props) => {
                     <input onChange={inputEventHandle} onKeyDown={keypressAdd} type="text" id="add-new" value={inputValue} name="addTitle" placeholder="Add new Task" />
                     {error && (
                         <div style={{
-                            color: 'var(--text)',
+                            color: 'var(--war)',
                             fontSize: '14px',
                             marginLeft: '5px',
                             marginTop: '5px',
                         }}>
-                            <i style={{ marginRight: '5px' }} className="fa-solid fa-circle-minus"></i>
+                            <i style={{ marginRight: '5px', color:'var(--war)' }} className="fa-solid fa-circle-minus"></i>
                             Please enter a task name
                         </div>
                     )}

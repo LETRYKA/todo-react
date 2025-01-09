@@ -2,10 +2,8 @@ import moment from 'moment';
 
 const TaskCard = (props) => {
   const { todo, filterState, isLogTabActive, checkBoxHandler, openDeletePopup, log } = props;
-  
 
   return (
-
     <div className='tasks-container'>
       {/* Task Container */}
       {todo.filter((todo) => {
@@ -60,9 +58,10 @@ const TaskCard = (props) => {
             </div>
             {isLogTabActive && (
               <div style={{ width: '90%', display: 'flex', alignItems: 'start', marginBottom: '20px' }} className='column'>
-                {log.logs.map((entry, index) => (
-                  <p className='time i-check center' key={index}>
-                    {entry.status}{moment(entry.timeline).fromNow()}
+                {/* Logs */}
+                {log[todo.id] && log[todo.id].map((entry, index) => (
+                  <p key={index} className="time i-check center">
+                    {entry.status}  {moment(entry.timeline).fromNow()}
                   </p>
                 ))}
               </div>
@@ -71,7 +70,6 @@ const TaskCard = (props) => {
         </div>
       ))}
     </div>
-
   );
 };
 

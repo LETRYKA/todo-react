@@ -37,17 +37,23 @@ function App() {
       setError(true);
     } else {
       setError(false);
-      const newTodo = { title: inputValue, id: uuidv4(), status: "ACTIVE", }
+      const newTodo = { title: inputValue, id: uuidv4(), status: "ACTIVE" };
       setTodo([...todo, newTodo]);
-      setLog({ task: todo.title, id: newTodo.id, logs: [{ status: "CREATED", timeline: moment() }] })
+      setLog(prevLogs => ({ ...prevLogs, [newTodo.id]: [...(prevLogs[newTodo.id] || []), { status: "CREATED", timeline: moment() }] }));
       setInputValue("");
     }
   };
 
+  // CHECKBOX HANDLER ISCHECKED
   const checkBoxHandler = (id, isChecked) => {
     const newTodos = todo.map((todo) => {
       if (todo.id === id) {
-        return { ...todo, status: isChecked ? "DONE" : "ACTIVE" };
+        const updatedTodo = { ...todo, status: isChecked ? "DONE" : "ACTIVE" };
+
+        setLog(prevLogs => ({
+          ...prevLogs, [id]: [...(prevLogs[id] || []), { status: isChecked ? "CHECKED" : "UNCHECKED", timeline: moment() }]
+        }));
+        return updatedTodo;
       } else {
         return todo;
       }
@@ -66,7 +72,9 @@ function App() {
     setTodo(updatedTodos);
     setShowPopup(false);
     setTaskToDelete();
+    setLog(prevLogs => ({ ...prevLogs, [taskToDelete]: [...(prevLogs[taskToDelete] || []), { status: "DELETED", timeline: moment() }] }));
   };
+
 
   // Filter by status
   const handleFilterState = (state) => {
@@ -104,7 +112,7 @@ function App() {
 
       {/* Task */}
       <ContainerHead filterState={filterState} handleFilterState={handleFilterState} todo={todo} inputEventHandle={inputEventHandle} inputValueAdd={inputValueAdd} inputValue={inputValue} error={error} />
-      <TaskCard todo={todo} filterState={filterState} isLogTabActive={isLogTabActive} checkBoxHandler={checkBoxHandler} openDeletePopup={openDeletePopup} log={log} />
+      <TaskCard todo={todo} filterState={filterState} isLogTabActive={isLogTabActive} checkBoxHandler={checkBoxHandler} openDeletePopup={openDeletePopup} log={log} setLog={setLog} />
 
       <p style={{ color: 'grey', marginTop: '30px', marginBottom: '40px', fontSize: '14px', }}> Powered by
         <a style={{ textDecoration: 'none', color: 'var(--secondary-color)', fontSize: '14px' }} href="https://pinecone.mn" target="_blank" rel="noreferrer">

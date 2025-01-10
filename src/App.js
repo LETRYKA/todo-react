@@ -44,38 +44,6 @@ function App() {
     }
   };
 
-  // CHECKBOX HANDLER ISCHECKED
-  const checkBoxHandler = (id, isChecked) => {
-    const newTodos = todo.map((todo) => {
-      if (todo.id === id) {
-        const updatedTodo = { ...todo, status: isChecked ? "DONE" : "ACTIVE" };
-
-        setLog(prevLogs => ({
-          ...prevLogs, [id]: [...(prevLogs[id] || []), { status: isChecked ? "CHECKED" : "UNCHECKED", timeline: moment() }]
-        }));
-        return updatedTodo;
-      } else {
-        return todo;
-      }
-    });
-    setTodo(newTodos);
-  };
-
-  // Delete Function
-  const deleteHandler = () => {
-    const updatedTodos = todo.map((task) => {
-      if (task.id === taskToDelete) {
-        return { ...task, status: "LOG", log: "DELETED" };
-      }
-      return task;
-    });
-    setTodo(updatedTodos);
-    setShowPopup(false);
-    setTaskToDelete();
-    setLog(prevLogs => ({ ...prevLogs, [taskToDelete]: [...(prevLogs[taskToDelete] || []), { status: "DELETED", timeline: moment() }] }));
-  };
-
-
   // Filter by status
   const handleFilterState = (state) => {
     setFilterState(state);
@@ -107,19 +75,13 @@ function App() {
 
       {/* Delete Popup */}
       {showPopup && (
-        <DeletePop todo={todo} taskToDelete={taskToDelete} deleteHandler={deleteHandler} setShowPopup={setShowPopup} />
+        <DeletePop todo={todo} setTodo={setTodo} setLog={setLog} taskToDelete={taskToDelete} setTaskToDelete={setTaskToDelete} setShowPopup={setShowPopup} />
       )}
 
       {/* Task */}
-      <ContainerHead filterState={filterState} handleFilterState={handleFilterState} todo={todo} inputEventHandle={inputEventHandle} inputValueAdd={inputValueAdd} inputValue={inputValue} error={error} />
-      <TaskCard todo={todo} filterState={filterState} isLogTabActive={isLogTabActive} checkBoxHandler={checkBoxHandler} openDeletePopup={openDeletePopup} log={log} setLog={setLog} />
-
-      <p style={{ color: 'grey', marginTop: '30px', marginBottom: '40px', fontSize: '14px', }}> Powered by
-        <a style={{ textDecoration: 'none', color: 'var(--secondary-color)', fontSize: '14px' }} href="https://pinecone.mn" target="_blank" rel="noreferrer">
-          Pinecone academy</a>
-      </p>
-
-      <Footer />
+      <ContainerHead filterState={filterState} handleFilterState={handleFilterState} todo={todo} inputEventHandle={inputEventHandle} inputValueAdd={inputValueAdd} inputValue={inputValue} error={error} log={log} />
+      <TaskCard todo={todo} setTodo={setTodo} filterState={filterState} isLogTabActive={isLogTabActive} setLog={setLog} openDeletePopup={openDeletePopup} log={log} />
+      <Footer todo={todo} setTodo={setTodo} />
     </div>
   );
 }

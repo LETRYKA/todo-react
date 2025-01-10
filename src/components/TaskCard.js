@@ -1,21 +1,41 @@
 import moment from 'moment';
 
 const TaskCard = (props) => {
-  const { todo, filterState, isLogTabActive, checkBoxHandler, openDeletePopup, log } = props;
+  const { todo, setTodo, filterState, isLogTabActive, setLog, openDeletePopup, log } = props;
+
+  // CHECKBOX HANDLER ISCHECKED
+  const checkBoxHandler = (id, isChecked) => {
+    const newTodos = todo.map((todo) => {
+      if (todo.id === id) {
+        const updatedTodo = { ...todo, status: isChecked ? "DONE" : "ACTIVE" };
+
+        setLog(prevLogs => ({
+          ...prevLogs, [id]: [...(prevLogs[id] || []), { status: isChecked ? "CHECKED" : "UNCHECKED", timeline: moment() }]
+        }));
+        return updatedTodo;
+      } else {
+        return todo;
+      }
+    });
+    setTodo(newTodos);
+  };
+
+  const filterTodo = (todo) => {
+    if (filterState === "LOGS") {
+      return todo.status === "LOG" || todo.status === "ACTIVE" || todo.status === "DELETED" || todo.status === "DONE";
+    }
+    if (filterState === "ALL") {
+      return todo.status !== "LOG";
+    } else {
+      return todo.status === filterState;
+    }
+  }
+
 
   return (
     <div className='tasks-container'>
       {/* Task Container */}
-      {todo.filter((todo) => {
-        if (filterState === "LOGS") {
-          return todo.status === "LOG" || todo.status === "ACTIVE" || todo.status === "DELETED" || todo.status === "DONE";
-        }
-        if (filterState === "ALL") {
-          return todo.status !== "LOG";
-        } else {
-          return todo.status === filterState;
-        }
-      }).map((todo, index) => (
+      {todo.filter(filterTodo).map((todo, index) => (
         <div key={index} className="task-container animate-fadeIn">
           <div className="task center">
             <div className='task-row'>

@@ -1,8 +1,27 @@
 import UseAnimations from "react-useanimations";
 import alertCircle from 'react-useanimations/lib/alertCircle';
+import moment from 'moment';
 
 const DeletePop = (props) => {
-    const { todo, taskToDelete, deleteHandler, setShowPopup } = props;
+    const { todo, setTodo, setLog, setTaskToDelete, taskToDelete, setShowPopup } = props;
+
+    // Delete Function
+    const deleteHandler = () => {
+        const updatedTodos = todo.map((task) => {
+            if (task.id === taskToDelete) {
+                return { ...task, status: "LOG", log: "DELETED" };
+            }
+            return task;
+        });
+        setTodo(updatedTodos);
+        setShowPopup(false);
+        setTaskToDelete();
+        setLog(prevLogs => ({ ...prevLogs, [taskToDelete]: [...(prevLogs[taskToDelete] || []), { status: "DELETED", timeline: moment() }] }));
+    };
+
+    console.log(todo)
+
+
 
     const closePopup = () => {
         setShowPopup(false);

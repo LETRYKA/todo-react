@@ -1,23 +1,23 @@
 
 const ContainerHead = (props) => {
-    const { filterState, handleFilterState, todo, inputEventHandle, inputValueAdd, inputValue, error } = props;
+    const { filterState, handleFilterState, todo, inputEventHandle, inputValueAdd, inputValue, error, log } = props;
 
     // Empty Message Placeholder
     const messageHandler = () => {
         if (filterState === "ALL" && todo.length === 0) {
-            return "Currently there is no task.";
+            return "Currently there is no task. 🌸";
         }
 
         if (filterState === "ACTIVE" && todo.filter((task) => task.status === "ACTIVE").length === 0) {
-            return "Currently there is no active task.";
+            return "Currently there is no active task. 😎";
         }
 
         if (filterState === "DONE" && todo.filter((task) => task.status === "DONE").length === 0) {
-            return "Currently there is no completed task.";
+            return "Currently there is no completed task. 😔";
         }
 
-        if (filterState === "LOG" && todo.filter((task) => task.status === "LOG").length === 0) {
-            return "Currently there is no logs";
+        if (log.length === 0) {
+            return "Currently there is no logs. 🫥";
         }
     };
 
@@ -44,7 +44,7 @@ const ContainerHead = (props) => {
                             marginLeft: '5px',
                             marginTop: '5px',
                         }}>
-                            <i style={{ marginRight: '5px', color:'var(--war)' }} className="fa-solid fa-circle-minus"></i>
+                            <i style={{ marginRight: '5px', color: 'var(--war)' }} className="fa-solid fa-circle-minus"></i>
                             Please enter a task name
                         </div>
                     )}
